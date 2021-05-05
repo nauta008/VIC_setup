@@ -3,6 +3,17 @@ rout.downstream.create <- function(flow_dir,mask,rev_y=FALSE){
   flow_dir_origin <- toupper(VICSetup$config$routing$direction$origin)
   log_info(sprintf('Using %s flow directions',flow_dir_origin))
   downstream = array(NA, dim = c(dim(flow_dir), 2))
+
+  for(x in 1:dim(mask)[1]){
+    for(y in 1:dim(mask)[2]){
+      if(is.na(mask[x,y])){
+        flow_dir[x,y] = NA
+      } else if (is.na(flow_dir[x,y])){
+        flow_dir[x,y] = VICSetup$constants$routing$origin[[flow_dir]]$outlet_val
+      }
+    }
+  }
+
   for(x in 1:dim(flow_dir)[1]){
     log_debug(sprintf("Running x=%s",x))
     for(y in 1:dim(flow_dir)[2]){
@@ -98,7 +109,7 @@ get.index.arcmap <- function(flow_dir){
 get.index.lisflood <- function(flow_dir){
   if(flow_dir < 1 || flow_dir > 9){
     log_warn(sprintf("Direction %s is outside range [1-9], defaulting to 5 [outlet]",flow_dir))
-    flow_dir = 5
+    flow_dir = VICSetup$constants$routing$origin$LISFLOOD$outlet_val
   }
   index = switch(flow_dir,
                  c(-1,-1), # south west

@@ -1,5 +1,6 @@
 
 rout.params.create <- function(){
+  routing <- list()
   if(is.null(VICSetup$grid)){
     domain.set()
   }
@@ -21,7 +22,10 @@ rout.params.create <- function(){
   }
   mask <- nc.data.get(VICSetup$config$domain$file, VICSetup$config$domain$var)
   flow_dir <- nc.data.get(VICSetup$config$routing$direction$file, VICSetup$config$routing$direction$var)
-  downstream <- rout.downstream.create(flow_dir, mask, reverse_y)
+  image(flow_dir)
+  routing$downstream <- rout.downstream.create(flow_dir, mask, reverse_y)
+  routing$basins <- rout.basin.create(routing$downstream)
 
+  VICSetup[['routing']] <- routing
 }
 

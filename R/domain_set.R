@@ -34,6 +34,8 @@ domain.set <- function(){
   grid$x_vals <- nc.data.get(VICSetup$config$domain$file, VICSetup$config$domain$dim$x)
   grid$y_vals <- nc.data.get(VICSetup$config$domain$file, VICSetup$config$domain$dim$y)
   grid$mask <- nc.data.get(VICSetup$config$domain$file, VICSetup$config$domain$var)
+  grid$raster <- raster(VICSetup$config$domain$file, varname=VICSetup$config$domain$var)
+  crs(grid$raster) <- grid$proj4
 
   VICSetup$grid <- grid
 }
