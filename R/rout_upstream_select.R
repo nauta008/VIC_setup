@@ -1,7 +1,11 @@
 
 rout.upstream.select <- function(xy, downstream, basins){
 
-  upstreams <- list()
+  # only one item
+  if( is.null(dim(xy)) && length(xy)==2){
+    xy <- array(xy, dim = c(1,2))
+  }
+  upstreams <- brick()
 
   for(xy_idx in 1:dim(xy)[1]){
     x <- xy[xy_idx,1]
@@ -19,7 +23,10 @@ rout.upstream.select <- function(xy, downstream, basins){
     sub_basins <-  rout.basin.create(downstream_c)
     upstream_sub_basin <- sub_basins[cell]
     sub_basins[sub_basins!=upstream_sub_basin] <- NA
-    upstreams[[xy_idx]] <- sub_basins
+
+    r_sub_mask <- raster(t(sub_basins), template=VICSetup$grid$raster)
+    names(r_sub_mask) <- "mask"
+    upstreams <- addLayer(upstreams, r_sub_mask)
   }
 
   return(upstreams)
