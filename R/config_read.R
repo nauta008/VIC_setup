@@ -14,7 +14,7 @@ VICSetup <- new.env()
 config.read <- function(file){
   config.restore()
   VICSetup$config <- read_yaml(file)
-  domain.set()
+  domain.init()
 }
 
 config.restore <- function(){
