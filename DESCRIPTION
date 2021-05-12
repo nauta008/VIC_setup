@@ -16,12 +16,15 @@ Imports:
   rgdal,
   raster,
   stars,
-  logger
+  logger,
+  ncmeta
 Depends:
-  yaml,
-  ncdf4,
-  ncdf4.helpers,
-  rgdal,
-  raster,
-  stars,
-  logger
+    yaml,
+    ncdf4,
+    ncdf4.helpers,
+    rgdal,
+    raster,
+    stars,
+    logger,
+    R (>= 2.10),
+    ncmeta

@@ -15,7 +15,7 @@ rout.downstream.create <- function(flow_dir,mask,rev_y=FALSE){
   }
 
   for(x in 1:dim(flow_dir)[1]){
-    log_debug(sprintf("Running x=%s",x))
+    log_debug(sprintf("Calc downstream for [%s].",x))
     for(y in 1:dim(flow_dir)[2]){
       if(is.na(flow_dir[x,y])){
         next
