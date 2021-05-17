@@ -31,11 +31,16 @@ domain.init <- function() {
     log_warn("Implicitly set the CRS from domain file.")
   }
 
-  if(is.null(grid_mapping) && !is.null(proj4_params)){
+  if(is.null(grid_mapping) && !is.null(proj4_params) && !is.na(proj4_params)){
     grid_mapping <- proj.to.grid.mapping(proj4_params)
   }
-  else if(is.null(proj4_params) && !is.null(grid_mapping)){
-    proj4_params <- nc_gm_to_prj(grid_mapping)
+  else if(is.null(proj4_params) || is.na(proj4_params) && !is.null(grid_mapping)){
+    if(is.null(grid_mapping$proj4_params)){
+      proj4_params <- nc_gm_to_prj(grid_mapping)
+    }
+    else{
+      proj4_params <- grid_mapping$proj4_params
+    }
   }
   else{
     # no grid mapping found and no proj4_params found
@@ -54,7 +59,7 @@ domain.init <- function() {
   grid_raster <- raster(VICSetup$config$domain$file, varname=VICSetup$config$domain$var)
   names(grid_raster) <- "mask"
   crs(grid_raster) <- proj4_params
-  stars_domain <- st_set_crs(stars_domain, crs=proj4_params)
+  stars_domain <- st_set_crs(stars_domain, proj4_params)
 
   lat <- NULL
   lon <- NULL
@@ -81,8 +86,8 @@ domain.init <- function() {
     else{
       # transform grid
       grid_latlon <- st_transform_proj(stars_domain,crs=4326)
-      lon <-st_get_dimension_values(grid_latlon, VICSetup$config$domain$x)
-      lat <-st_get_dimension_values(grid_latlon, VICSetup$config$domain$y)
+      lon <-st_get_dimension_values(grid_latlon, VICSetup$config$domain$dim$x)
+      lat <-st_get_dimension_values(grid_latlon, VICSetup$config$domain$dim$y)
     }
     r_lon <- raster(t(lon), template=grid_raster)
     names(r_lon) <- "lon"

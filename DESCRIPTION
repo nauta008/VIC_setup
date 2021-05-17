@@ -17,7 +17,8 @@ Imports:
   raster,
   stars,
   logger,
-  ncmeta
+  ncmeta,
+  units
 Depends:
     yaml,
     ncdf4,
@@ -27,4 +28,5 @@ Depends:
     stars,
     logger,
     R (>= 2.10),
-    ncmeta
+    ncmeta,
+    units

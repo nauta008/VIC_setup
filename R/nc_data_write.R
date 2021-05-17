@@ -1,8 +1,8 @@
 
-nc.data.write <- function(file_name, raster_obj){
+nc.data.write <- function(raster_obj, file_name){
 
   # get crs
-  proj4_params <- crs(raster_obj)
+  proj4_params <- CRSargs(crs(raster_obj))
   grid_mapping <- proj.to.grid.mapping(proj4_params)
   # get args
   proj4_args <- proj.get.args(proj4_params)
@@ -26,22 +26,33 @@ nc.data.write <- function(file_name, raster_obj){
     y_longname <- 'y coordinate of grid cell center'
   }
 
+  x_vals <- seq(from=raster_obj@extent@xmin + abs(VICSetup$grid$resolution[1])/2,
+                      to=raster_obj@extent@xmax- abs( VICSetup$grid$resolution[1])/2, by=abs(VICSetup$grid$resolution[1]))
 
-  dim_x <- ncdim_def(name = x_name,units = proj_units_x, vals = VICSetup$grid$x_vals, longname = x_longname)
-  dim_y <- ncdim_def(name = y_name,units = proj_units_y, vals = VICSetup$grid$y_vals, longname = y_longname)
+  y_vals <- seq(from=raster_obj@extent@ymin + abs( VICSetup$grid$resolution[2])/2,
+                      to=raster_obj@extent@ymax- abs(VICSetup$grid$resolution[2])/2, by=abs(VICSetup$grid$resolution[2]))
+
+  dim_x <- ncdim_def(name = x_name,units = proj_units_x, vals = x_vals, longname = x_longname)
+  dim_y <- ncdim_def(name = y_name,units = proj_units_y, vals = y_vals, longname = y_longname)
 
   nc_var_list <- list()
 
   for(n in 1:nlayers(raster_obj)){
     r <- raster_obj[[n]]
-    nc_var <- ncvar_def(name = names(r)[1],dim = list(dim_x,dim_y), units = r@data@unit, missval = NaN, prec ='integer',compression = 1)
+    data_type <- dataType(r)
+    data_prec <- "integer"
+    if(any(data_type == c("FLT4S","FLT8S"))){
+      data_prec <- "float"
+    }
+    nc_var <- ncvar_def(name = names(r)[1],dim = list(dim_x,dim_y), units = r@data@unit, missval = 1e20, prec =data_prec,compression = 1)
     nc_var_list[[as.character(n)]] <- nc_var
   }
 
+  if(file.exists(file_name)){
+    file.remove(file_name)
+  }
   nc <- nc_create(file_name, nc_var_list)
-  #nc_close(nc)
 
-  #nc <- nc_open(filename, write=T)
   for(n in 1:nlayers(raster_obj)){
     r <- raster_obj[[n]]
     if(VICSetup$grid$reverse_y){
@@ -54,9 +65,11 @@ nc.data.write <- function(file_name, raster_obj){
 
   # add grid_mapping variable
   nc_grid_mapping_var <- ncvar_def(grid_mapping$grid_mapping_name,units="",dim=list(),prec = 'char')
-  ncvar_add(nc,nc_grid_mapping_var)
+  nc <- ncvar_add(nc,nc_grid_mapping_var)
+  nc_close(nc)
+  nc <- nc_open(file_name, write=TRUE)
   for(grid_mapping_attr in names(grid_mapping)){
-    ncatt_put(nc, grid_mapping$grid_mapping_name,attname = grid_mapping_attr, attval = grid_mapping[[grid_mapping_attr]])
+    ncatt_put(nc, nc_grid_mapping_var,attname = grid_mapping_attr, attval = grid_mapping[[grid_mapping_attr]])
   }
   ncatt_put(nc, grid_mapping$grid_mapping_name, attname = "proj4_params", attval = proj4_params)
   nc_close(nc)

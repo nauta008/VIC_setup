@@ -8,7 +8,7 @@ raster.latlon.transform <- function(raster_obj, x_dim="x", y_dim="y"){
 
   stars_obj <- st_as_stars(raster_obj)
 
-  grid_latlon <- st_transform_proj(stars_domain,crs=4326)
+  grid_latlon <- st_transform_proj(stars_obj,crs=4326)
   lon <-st_get_dimension_values(grid_latlon, x_dim)
   lat <-st_get_dimension_values(grid_latlon, y_dim)
 

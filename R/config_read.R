@@ -39,6 +39,14 @@ config.read <- function(file){
   config.restore()
   VICSetup$config <- read_yaml(file)
   domain.init()
+  # create setup output
+  if(!is.null(VICSetup$config$output)){
+    if(!is.null(VICSetup$config$output$domain)){
+      # domain_out_config <- VICSetup$config$output$domain
+      # domain_file_out <- file.path(VICSetup$config$output$path, domain_out_config$file)
+      domain.create()
+    }
+  }
   rout.params.create()
 }
 

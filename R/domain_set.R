@@ -29,7 +29,7 @@ domain.set <- function(raster_domain){
 
   grid$raster <- raster_domain
 
-  grid$proj4 <- crs(raster_domain)
+  grid$proj4 <- CRSargs(crs(raster_domain))
   grid$grid_mapping <- proj.to.grid.mapping(grid$proj4)
 
   log_info(sprintf("Domain set. VICsetup will use domain with %s and resolution [%s,%s]", extent(grid$raster), grid$resolution[1],grid$resolution[2]))

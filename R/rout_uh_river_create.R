@@ -9,18 +9,6 @@ rout.uh.river.create <- function(distance, velocity=1,diffusion =2000){
   #times <- cumsum(rep(3600, 24 * 7))
   #times <- c(0, times)
 
-  rout.calc.h <- function(time, velocity, diffusion, distance){
-    pot <- ((velocity * time - distance)^2) / (4 * diffusion * time)
-
-    if (pot <= 69) {
-      h <- 1 / (2 * sqrt(pi * diffusion)) * distance / (time^1.5) * exp(-pot)
-    } else {
-      h <- 0
-    }
-    return(h)
-
-  }
-
   # Calculate
   uh_river_map <- array(NA, dim = c(dim(distance)[1], dim(distance)[2], length(times)))
   for (x in 1:dim(uh_river_map)[1]) {
@@ -34,6 +22,29 @@ rout.uh.river.create <- function(distance, velocity=1,diffusion =2000){
       uh_river_map[x, y, ] <- uh_river$Fraction / sum(uh_river$Fraction)
     }
   }
+
+}
+
+rout.uh.river.get <- function(velocity, diffusion, distance, time){
+
+  uh <- rep(0, length(time))
+
+  h <- apply(array(time, dim = c(length(time))), MARGIN = 1, FUN = rout.calc.h, velocity = velocity, diffusion = diffusion, distance = distance)
+
+  uh <- h / sum(h)
+
+  return(data.frame(Time = time - time[1], Fraction = uh))
+}
+
+rout.calc.h <- function(time, velocity, diffusion, distance){
+  pot <- ((velocity * time - distance)^2) / (4 * diffusion * time)
+
+  if (pot <= 69) {
+    h <- 1 / (2 * sqrt(pi * diffusion)) * distance / (time^1.5) * exp(-pot)
+  } else {
+    h <- 0
+  }
+  return(h)
 
 }
 
