@@ -49,13 +49,7 @@ domain.init <- function() {
     stop()
   }
 
-  # both proj4_params and grid_mapping should be filled here.
-
-  #grid$mask <- nc.data.get(VICSetup$config$domain$file, VICSetup$config$domain$var)
-  #grid$proj4 <- proj4
-  #grid$type <-  st_raster_type(stars_domain)
-  #grid$grid_mapping <- grid_mapping
-
+  # both proj4_params and grid_mapping should be filled at this point.
   grid_raster <- raster(VICSetup$config$domain$file, varname=VICSetup$config$domain$var)
   names(grid_raster) <- "mask"
   crs(grid_raster) <- proj4_params

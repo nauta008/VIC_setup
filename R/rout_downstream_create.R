@@ -2,20 +2,26 @@
 rout.downstream.create <- function(flow_dir,mask,rev_y=FALSE){
   flow_dir_origin <- toupper(VICSetup$config$routing$direction$origin)
   log_info(sprintf('Using %s flow directions',flow_dir_origin))
+  if(rev_y){
+    log_info("Correct for upside down latitude orientation in downstream routine.")
+  }
   downstream = array(NA, dim = c(dim(flow_dir), 2))
 
   for(x in 1:dim(mask)[1]){
     for(y in 1:dim(mask)[2]){
+      # set flow_dir cell to NA if outside mask
       if(is.na(mask[x,y])){
         flow_dir[x,y] = NA
-      } else if (is.na(flow_dir[x,y])){
+      }
+      # set flow dir cell to outlet if flow_dir inside mask but has NA value
+      else if (is.na(flow_dir[x,y])){
         flow_dir[x,y] = CONSTANTS$routing$origin[[flow_dir]]$outlet_val
       }
     }
   }
 
   for(x in 1:dim(flow_dir)[1]){
-    log_debug(sprintf("Calc downstream for [%s].",x))
+    log_debug(sprintf("Calc downstream for [%s,].",x))
     for(y in 1:dim(flow_dir)[2]){
       if(is.na(flow_dir[x,y])){
         next
@@ -23,7 +29,6 @@ rout.downstream.create <- function(flow_dir,mask,rev_y=FALSE){
 
       dx_dy <- direction.to.index(flow_dir[x,y],flow_dir_origin,rev_y)
       next.cell = c(x,y) + dx_dy
-      #log_debug(sprintf("[%s,%s] [%s,%s]",dx_dy[1],dx_dy[2],next.cell[1], next.cell[2]))
       if(is.na(mask[next.cell[1], next.cell[2]])){
         next.cell = c(x,y)
       }
@@ -34,6 +39,20 @@ rout.downstream.create <- function(flow_dir,mask,rev_y=FALSE){
   return(downstream)
 }
 
+
+rout.downstream.2d.create <- function(downstream, downstream_id){
+  downstream_2d <- array(NA, dim = dim(downstream_id))
+  for (x in 1:dim(downstream)[1]) {
+    for (y in 1:dim(downstream)[2]) {
+      if (is.na(downstream[x, y, 1])) {
+        next
+      }
+      downstream_cell <- downstream[x, y, ]
+      downstream_2d[x, y] <- downstream_id[downstream_cell[1], downstream_cell[2]]
+    }
+  }
+  return(downstream_2d)
+}
 
 direction.to.index <- function(flow_dir, flow_dir_origin ,rev_y=FALSE){
 

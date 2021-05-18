@@ -21,12 +21,6 @@ domain.set <- function(raster_domain){
     grid$reverse_y <- TRUE
   }
 
-  # grid$x_vals <- seq(from=raster_domain@extent@xmin + abs(grid$resolution[1])/2,
-  #                    to=raster_domain@extent@xmax- abs(grid$resolution[1])/2, by=abs(grid$resolution[1]))
-
-  # grid$y_vals <- seq(from=raster_domain@extent@ymin + abs(grid$resolution[2])/2,
-  #                    to=raster_domain@extent@ymax- abs(grid$resolution[2])/2, by=abs(grid$resolution[2]))
-
   grid$raster <- raster_domain
 
   grid$proj4 <- CRSargs(crs(raster_domain))
@@ -34,9 +28,11 @@ domain.set <- function(raster_domain){
 
   log_info(sprintf("Domain set. VICsetup will use domain with %s and resolution [%s,%s]", extent(grid$raster), grid$resolution[1],grid$resolution[2]))
 
+  grid$isLonLat <- TRUE
   # if no lat lon data
   if(!isLonLat(grid$raster) && !all(c("lat","lon") %in%names(grid$raster))){
     grid$raster <- raster.latlon.transform(grid$raster)
+    grid$isLonLat <- FALSE
   }
 
   VICSetup$grid <- grid

@@ -33,6 +33,10 @@ routing.origin[['ARCMAP']] <- list(outlet_val=9)
 CONSTANTS$routing[['origin']] <- routing.origin
 rm(routing.origin)
 
+missing.vals <- list(float=1e20, integer=-.Machine$integer.max, double=1e20, short=-32,767,byte=-127)
+CONSTANTS$missing_vals <- missing.vals
+rm(missing.vals)
+
 VICSetup <- new.env()
 
 config.read <- function(file){
@@ -42,12 +46,14 @@ config.read <- function(file){
   # create setup output
   if(!is.null(VICSetup$config$output)){
     if(!is.null(VICSetup$config$output$domain)){
-      # domain_out_config <- VICSetup$config$output$domain
-      # domain_file_out <- file.path(VICSetup$config$output$path, domain_out_config$file)
       domain.create()
     }
+    if(!is.null(VICSetup$config$output$routing)){
+      rout.params.create()
+    }
   }
-  rout.params.create()
+
+
 }
 
 config.restore <- function(){

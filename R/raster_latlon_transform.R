@@ -15,9 +15,12 @@ raster.latlon.transform <- function(raster_obj, x_dim="x", y_dim="y"){
   # transpose array, because raster uses lat in first dimension
   r_lon <- raster(t(lon), template=raster_obj)
   names(r_lon) <- "lon"
+  r_lon@data@unit <- "degrees_east"
+  r_lon@title <- "longitude"
   r_lat <- raster(t(lat), template=raster_obj)
   names(r_lat) <- "lat"
-
+  r_lat@data@unit <- "degrees_north"
+  r_lat@title <- "latitude"
   r_latlon <- stack(raster_obj,r_lat,r_lon)
   return(r_latlon)
 }

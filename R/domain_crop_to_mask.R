@@ -18,10 +18,8 @@ domain.crop.by.basin <- function(settings){
   }
 
   if(is.null(VICSetup$routing$downstream)){
-    rout.params.create(out_uh=FALSE)
+    rout.params.create(out_uh=FALSE, out_basins=TRUE,write_file=FALSE)
   }
-  basins <- rout.basin.create(VICSetup$routing$downstream)
-  #r_basins <- raster(t(basins),template=VICSetup$grid$raster)
-  r_upstream_cells <- rout.upstream.select(settings$crop$outlet$coords,VICSetup$routing$downstream, basins)
+  r_upstream_cells <- rout.upstream.select(settings$crop$outlet$coords,VICSetup$routing$downstream, VICSetup$routing$basins)
   domain.crop.to.mask(r_upstream_cells)
 }

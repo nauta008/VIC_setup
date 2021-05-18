@@ -22,7 +22,7 @@ rout.uh.river.create <- function(distance, velocity=1,diffusion =2000){
       uh_river_map[x, y, ] <- uh_river$Fraction / sum(uh_river$Fraction)
     }
   }
-
+  return(uh_river_map)
 }
 
 rout.uh.river.get <- function(velocity, diffusion, distance, time){
