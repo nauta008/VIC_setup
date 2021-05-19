@@ -37,9 +37,9 @@ rout.params.create <- function(out_uh=TRUE,out_basins=TRUE,write_file=TRUE){
 
   mask <- domain$mask
   # mask the routing variables
-  flow_dir <- flow_dir[[VICSetup$config$routing$direction$var]] * mask
-  slope <-  slope[[VICSetup$config$routing$slope$var]] * mask
-  distance <- distance[[VICSetup$config$routing$distance$var]] * mask
+  flow_dir <- flow_dir[[VICSetup$config$routing$direction$var]]
+  slope <-  slope[[VICSetup$config$routing$slope$var]]
+  distance <- distance[[VICSetup$config$routing$distance$var]]
 
   # always create downstream
   raster_downstream <- stack()
@@ -50,7 +50,12 @@ rout.params.create <- function(out_uh=TRUE,out_basins=TRUE,write_file=TRUE){
 
   downstream_2d <- rout.downstream.2d.create(routing$downstream, downstream_id)
   r_downstream <- raster.create(downstream_2d, "downstream","ID of the downstream cell","-" ,"INT4S")
-  raster_downstream <- addLayer(raster_downstream,r_downstream,r_downstream_id)
+
+  r_slope <- raster.create(slope,"gradient","channel gradient","-","FLT4S")
+
+  raster_downstream <- addLayer(raster_downstream,r_downstream,r_downstream_id, r_slope)
+
+
 
   # add the lat and lon for x,y grids
   if(!VICSetup$grid$isLonLat){

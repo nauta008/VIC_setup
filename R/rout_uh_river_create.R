@@ -1,13 +1,9 @@
 
 rout.uh.river.create <- function(distance, velocity=1,diffusion =2000){
 
-  # SETUP WATERSIS
-  times <- cumsum(rep(3600, 24 * 2))
-  times <- c(0,times)
-
-  # SETUP BRAM
-  #times <- cumsum(rep(3600, 24 * 7))
-  #times <- c(0, times)
+  int_sec <- 3600*24 / as.integer(VICSetup$config$output$routing$steps_per_day)
+  times <- cumsum(rep(int_sec, VICSetup$config$output$routing$steps_per_day *VICSetup$config$output$routing$ndays))
+  times <- c(0, times)
 
   # Calculate
   uh_river_map <- array(NA, dim = c(dim(distance)[1], dim(distance)[2], length(times)))

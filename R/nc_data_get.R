@@ -8,6 +8,8 @@ nc.data.get <- function(file,var){
 
 
 nc.data.get.stars <- function(file,var, crs=NULL){
+  # NOTE: can produce errors like: Error in UseMethod("GPFN") : no applicable method for 'GPFN' applied to an object of class "list". In this case it cannot map the grid mapping,
+  # but we solve this in nc.gid.mapping.get.
   stars_data <- read_ncdf(file,var = var, make_units = FALSE)
   stars_data_crs <- st_crs(stars_data)
   if(is.na(stars_data_crs) || is.null(stars_data_crs)){

@@ -1,12 +1,10 @@
 
 rout.uh.grid.create <- function(slope,distance){
   uh <- dimensionless_uh
-  # Setup WATERSIS
-  times <- cumsum(rep(3600, 24 * 2))
-  times <- c(0,times)
-  # Setup BRAM
-  # times <- cumsum(rep(3600, 24 * 7))
-  # times <- c(0, times)
+
+  int_sec <- 3600*24 / as.integer(VICSetup$config$output$routing$steps_per_day)
+  times <- cumsum(rep(int_sec, VICSetup$config$output$routing$steps_per_day *VICSetup$config$output$routing$ndays))
+  times <- c(0, times)
 
   interp <- function(x, x1, x2, y1, y2) {
     if (x < x1[1]) {
@@ -23,11 +21,12 @@ rout.uh.grid.create <- function(slope,distance){
     return(y1[idx] + ydist * xfrac)
   }
 
+
   get.grid.tp <- function(local_distance, local_slope) {
     if (local_slope == 0) {
       local_slope <- 1e-10
     }
-
+    # Kirpitch equation (1940)
     tc <- ((0.01947 * local_distance)^0.77) / (local_slope^0.385)
     tp <- 0.6 * tc
     tp <- tp * 60
@@ -57,12 +56,17 @@ rout.uh.grid.create <- function(slope,distance){
     log_debug(sprintf("Calc uh_grid for [%s,]",x))
     for (y in 1:dim(uh_grid_map)[2]) {
       if (is.na(slope[x, y]) || is.na(distance[x,y])) {
+        #log_warn(sprintf("no slope and distance at [%s,%s]", x,y))
         next
       }
-
       tp_grid <- get.grid.tp(distance[x, y], slope[x, y])
       uh_grid <- get.grid.uh(tp_grid)
-
+      # all water flows outside the cell within 1 hour
+      if(all(is.na(uh_grid$Fraction))){
+       log_warn(sprintf("Time to peak of %.2f [sec] is smaller than the routing interval of 3600 [sec] at cell [%s,%s]. All water flows outside cell within first routing step. Consider raising the routing steps per day.",tp_grid,x,y))
+       uh_grid$Fraction <- rep(0, length(uh_grid$Fraction))
+       uh_grid$Fraction[2] <- 1
+      }
       uh_grid_map[x, y, ] <- uh_grid$Fraction / sum(uh_grid$Fraction)
     }
   }

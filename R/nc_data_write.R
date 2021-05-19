@@ -148,7 +148,7 @@ nc.data.write.raster <- function(raster_obj, file_name, do_append=FALSE, var_nam
   else{
     ncvar_put(nc, nc_var_list[[1]], vals=as.vector(raster_obj))
     ncatt_put(nc,nc_var_list[[1]], attname = 'grid_mapping',grid_mapping$grid_mapping_name)
-    ncatt_put(nc,nc_var_list[[1]], attname = 'missing_value', attval = 1e20, prec = 'double')
+    ncatt_put(nc,nc_var_list[[1]], attname = 'missing_value', attval = CONSTANTS$missing_vals[[nc_var_list[[1]]$prec]], prec = nc_var_list[[1]]$prec)
     #ncatt_put(nc,nc_var_list[[1]], attname = '_FillValue', attval = 1e20, prec = 'double')
   }
 
@@ -173,6 +173,7 @@ nc.data.write.raster <- function(raster_obj, file_name, do_append=FALSE, var_nam
     ncatt_put(nc, varid = 0, attname = 'user', attval = Sys.getenv("USERNAME"), prec = 'char')
     ncatt_put(nc, varid= 0, attname='R_version',attval = as.character(getRversion()), prec = 'char')
     ncatt_put(nc, varid = 0, attname = 'R_package_name', attval = 'VICsetup', prec = 'char')
+    ncatt_put(nc, varid = 0, attname = 'VICsetup_version', attval = as.character(packageVersion('VICsetup')), prec='char')
     ncatt_put(nc, varid = 0, attname = 'references', attval = 'https://github.com/nauta008/VIC_setup', prec = 'char')
     log_info(sprintf("Output %s created.", file_name))
   }
