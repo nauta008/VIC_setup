@@ -29,8 +29,8 @@ domain.set <- function(raster_domain){
   log_info(sprintf("Domain set. VICsetup will use domain with %s and resolution [%s,%s]", extent(grid$raster), grid$resolution[1],grid$resolution[2]))
 
   grid$isLonLat <- TRUE
-  # if no lat lon data
-  if(!isLonLat(grid$raster) && !all(c("lat","lon") %in%names(grid$raster))){
+  # if no lonlat grid and no lat and lon attributes. create lat and lon variables
+  if(!isLonLat(grid$raster) && !all(c("lat","lon") %in% names(grid$raster))){
     grid$raster <- raster.latlon.transform(grid$raster)
     grid$isLonLat <- FALSE
   }

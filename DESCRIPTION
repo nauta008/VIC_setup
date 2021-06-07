@@ -18,7 +18,8 @@ Imports:
   stars,
   logger,
   ncmeta,
-  units
+  units,
+  dplyr
 Depends:
     yaml,
     ncdf4,
@@ -29,4 +30,5 @@ Depends:
     logger,
     R (>= 2.10),
     ncmeta,
-    units
+    units,
+    dplyr

@@ -9,7 +9,7 @@ domain.create <- function(){
   }
   # add area
   if(VICSetup$grid$isLonLat){
-    area <- as.array(area(VICSetup$grid$raster))
+    area <- raster::as.array(area(VICSetup$grid$raster))
     area <- area[,,1]
   }
   else{

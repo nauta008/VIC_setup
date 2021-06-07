@@ -37,6 +37,7 @@ missing.vals <- list(float=-((2-2^-23) * 2^127), integer=-.Machine$integer.max, 
 CONSTANTS$missing_vals <- missing.vals
 rm(missing.vals)
 
+
 VICSetup <- new.env()
 
 config.read <- function(file){
@@ -54,9 +55,10 @@ config.read <- function(file){
       defaults.routing.set()
       rout.params.create()
     }
+    if(!is.null(VICSetup$config$output$params)){
+      vic.params.create()
+    }
   }
-
-
 }
 
 config.restore <- function(){

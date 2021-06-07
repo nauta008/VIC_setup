@@ -51,6 +51,7 @@ rout.uh.grid.create <- function(slope,distance){
   }
 
   uh_grid_map <- array(NA, dim = c(dim(distance)[1], dim(distance)[2], length(times)))
+  n_cell_warnings <- 0
 
   for (x in 1:dim(uh_grid_map)[1]) {
     log_debug(sprintf("Calc uh_grid for [%s,]",x))
@@ -63,12 +64,16 @@ rout.uh.grid.create <- function(slope,distance){
       uh_grid <- get.grid.uh(tp_grid)
       # all water flows outside the cell within 1 hour
       if(all(is.na(uh_grid$Fraction))){
-       log_warn(sprintf("Time to peak of %.2f [sec] is smaller than the routing interval of 3600 [sec] at cell [%s,%s]. All water flows outside cell within first routing step. Consider raising the routing steps per day.",tp_grid,x,y))
-       uh_grid$Fraction <- rep(0, length(uh_grid$Fraction))
-       uh_grid$Fraction[2] <- 1
+        n_cell_warnings <- n_cell_warnings + 1
+        uh_grid$Fraction <- rep(0, length(uh_grid$Fraction))
+        uh_grid$Fraction[1] <- 1
       }
       uh_grid_map[x, y, ] <- uh_grid$Fraction / sum(uh_grid$Fraction)
     }
+  }
+
+  if(n_cell_warnings > 0){
+    log_warn(sprintf("Time to peak is smaller than the routing interval of %s [sec] at %s cells. All water flows outside the grid cell within first routing step. Consider raising the routing steps per day.",int_sec,n_cell_warnings))
   }
 
   return(uh_grid_map)
