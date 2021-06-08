@@ -175,7 +175,7 @@ nc.data.write.stars <- function(stars_data,file_name, grid_mapping, var_attr=NUL
       tmp_attr %>% filter(name==tolower(var_name)) -> i_var_attr
       long_name <- i_var_attr$long_name
       unit_name <- i_var_attr$unit
-      #data_prec <- i_var_attr$data_type
+      data_prec <- i_var_attr$data_type
     }
     nc_var <- ncvar_def(var_name,units = unit_name,dim = nc_dim_list ,longname = long_name,prec = data_prec ,missval =  CONSTANTS$missing_vals[[data_prec]], compression = 1)
     ncvar_add(nc,nc_var)

@@ -51,11 +51,12 @@ rout.params.create <- function(out_uh=TRUE,out_basins=TRUE,write_file=TRUE){
   downstream_2d <- rout.downstream.2d.create(routing$downstream, downstream_id)
   r_downstream <- raster.create(downstream_2d, "downstream","ID of the downstream cell","-" ,"INT4S")
 
+  rm(downstream_id,downstream_2d)
+
+
   r_slope <- raster.create(slope,"gradient","channel gradient","-","FLT4S")
 
   raster_downstream <- addLayer(raster_downstream,r_downstream,r_downstream_id, r_slope)
-
-
 
   # add the lat and lon for x,y grids
   if(!VICSetup$grid$isLonLat){
@@ -91,6 +92,16 @@ rout.params.create <- function(out_uh=TRUE,out_basins=TRUE,write_file=TRUE){
     routing_rasters$uh_inflow <- r_uh_river
   }
 
+  if(write_file){
+    upstream_output <- rout.upstream.area.create(routing$downstream)
+    r_upstream <- raster.create(upstream_output$upstream_area,"upstream_area","upstream area of cell","m2","FLT4S")
+    r_count <- raster.create(upstream_output$cell_count,"count","number of contributing cells","-","INT4S")
+    rm(upstream_output)
+    routing_rasters$upstream_are <- r_upstream
+    routing_rasters$cell_count <- r_count
+  }
+
+  # TODO: check if this needs to be stored in env
   VICSetup$routing <- routing
   routing_rasters$downstream <- raster_downstream
   # create raster stack
