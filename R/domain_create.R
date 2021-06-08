@@ -10,8 +10,8 @@ domain.create <- function(){
   # add area
   if(VICSetup$grid$isLonLat){
     area <- raster::as.array(area(VICSetup$grid$raster))
-    # convert from km^2 to m^2
-    area <- area[,,1] * 1000^2
+    # already in m2 and not in km2 as the raster documentation suggests
+    area <- area[,,1]
   }
   else{
     area <- array(abs(prod(VICSetup$grid$resolution)), dim = c(ncol(VICSetup$grid$raster),nrow(VICSetup$grid$raster)))
