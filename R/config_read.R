@@ -33,7 +33,7 @@ routing.origin[['ARCMAP']] <- list(outlet_val=9)
 CONSTANTS$routing[['origin']] <- routing.origin
 rm(routing.origin)
 
-missing.vals <- list(float=-((2-2^-23) * 2^127), integer=-.Machine$integer.max, double=.Machine$double.xmin, short=-32,767,byte=-127)
+missing.vals <- list(float=1e20, integer=-.Machine$integer.max, double=1e20, short=-32,767,byte=-127)
 CONSTANTS$missing_vals <- missing.vals
 rm(missing.vals)
 

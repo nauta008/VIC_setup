@@ -17,7 +17,7 @@ depth;depth;[nlayer, lat, lon];m;double;soil;1;Thickness of each soil moisture l
 avg_T;avg_T;[lat, lon];C;double;soil;1;Average soil temperature, used as the bottom boundary for soil heat flux solutions
 dp;dp;[lat, lon];m;double;soil;1;Soil thermal damping depth (depth at which soil temperature remains constant through the year, ~4 m)
 bubble;bubble;[nlayer, lat, lon];cm;double;soil;1;Bubbling pressure of soil. Values should be >0.
-quartz;quartz;[nlayer, lat, lon];-;double;soil;1;Quartz content of soil
+quartz;quartz;[nlayer, lat, lon];;double;soil;1;Quartz content of soil
 bulk_density;bulk_density;[nlayer, lat, lon];kg/m3;double;soil;1;Bulk density of soil layer
 soil_density;soil_density;[nlayer, lat, lon];kg/m3;double;soil;1;Soil particle density, normally 2685 kg/m3
 organic;organic;[nlayer, lat, lon];fraction;double;soil;0;Fraction of soil layer that is organic. If ORGANIC_FRACT is TRUE in the global parameter file, this variable must be included in the soil parameter file. If ORGANIC_FRACT is FALSE then this variable must not appear in the soil parameter file. (release 4.1.2 and later)
@@ -34,21 +34,21 @@ fs_active;fs_active;[lat, lon];1 or 0;integer;soil;1;If set to 1 then frozen soi
 frost_slope;frost_slope;[lat,lon];C;double;soil;1;Slope of uniform distribution of soil temperature (if SPATIAL_FROST == TRUE in the global parameter file).
 max_snow_distrib_slope;max_snow_distrib_slope;[lat, lon];m;double;soil;1;Maximum slope of the snow depth distribution. This is only used if SPATIAL_SNOW == TRUE in the global parameter file. This parameter should be set to twice the spatial average snow depth at which coverage == 1.0. In other words, if we define depth_thresh to be the minimum spatial average snow depth below which coverage < 1.0, then max_snow_distrib_slope = 2depth_thresh. NOTE*: Partial snow coverage is only computed when the snow pack has started melting and thespatial average snow pack depth <= max_snow_distrib_slope/2. During the accumulation season, coverage is 1.0. Even after the pack has started melting anddepth <= max_snow_distrib_slope/2, new snowfall resets coverage to 1.0, and the previous partial coverage is stored. Coverage remains at 1.0 until the new snow has melted away, at which point the previous partial coverage is recovered.
 July_Tavg;July_Tavg;[lat, lon];C;double;soil;1;Average July air temperature, used for treeline computations (required if COMPUTE_TREELINE == TRUE in the global parameter file).
-Nveg;Nveg;[lat,lon];-;integer;vegetation;1;Number of vegetation tiles in the grid cell
-veg_class;vegetation class;[lat,lon];-;integer;vegetation;1;Vegetation class identification number
-Cv;Cv;[lat,lon, veg_class];-;double;vegetation;1;Fraction of grid cell covered by vegetation tile
+Nveg;Nveg;[lat,lon];;integer;vegetation;1;Number of vegetation tiles in the grid cell
+veg_class;vegetation class;[lat,lon];;integer;vegetation;1;Vegetation class identification number
+Cv;Cv;[lat,lon, veg_class];;double;vegetation;1;Fraction of grid cell covered by vegetation tile
 root_depth;root_depth;[lat,lon,veg_class,root_zone];m;double;vegetation;1;Root zone thickness (sum of depths is total depth of root penetration)
 root_fract;root_fract;[lat,lon,veg_class,root_zone];fraction;double;vegetation;1;Fraction of root in the current root zone.
-sigma_slope;sigma_slope;[lat,lon,veg_class];-;double;vegetation;0;Standard deviation of terrain slopes within vegetation tile
-lag_one;lag_one;[lat,lon,veg_class];-;double;vegetation;0;Lag-one autocorrelation of terrain slope within vegetation tile
+sigma_slope;sigma_slope;[lat,lon,veg_class];;double;vegetation;0;Standard deviation of terrain slopes within vegetation tile
+lag_one;lag_one;[lat,lon,veg_class];;double;vegetation;0;Lag-one autocorrelation of terrain slope within vegetation tile
 fetch;fetch;[lat,lon,veg_class];m;double;vegetation;0;Average fetch (distance the wind blows without obstructions) within vegetation tile
 LAI;LAI;[lat,lon,veg_class,month_of_year];fraction;double;vegetation;0;Leaf Area Index, one per month
 fcanopy;fcanopy;[lat,lon,veg_class,month_of_year];fraction;double;vegetation;0;Partial vegetation cover fraction, one per month
 albedo;albedo;[lat,lon,veg_class,month_of_year];fraction;double;vegetation;0;Albedo, one per month
-overstory;overstory;;-;integer;vegetation;1;Flag to indicate whether or not the current vegetation type has an overstory (TRUE for overstory present [e.g. trees], FALSE for overstory not present [e.g. grass])
+overstory;overstory;;;integer;vegetation;1;Flag to indicate whether or not the current vegetation type has an overstory (TRUE for overstory present [e.g. trees], FALSE for overstory not present [e.g. grass])
 rarc;rarc;;s/m;double;vegetation;1;Architectural resistance of vegetation type (~2 s/m)
 rmin;rmin;;s/m;double;vegetation;1;Minimum stomatal resistance of vegetation type (~100 s/m)
-rough;rough;;m;double;vegetation;1;Vegetation roughness length (typically 0.123 * vegetation height)
+veg_rough;veg_rough;;m;double;vegetation;1;Vegetation roughness length (typically 0.123 * vegetation height)
 displacement;displacement;;m;double;vegetation;1;Vegetation displacement height (typically 0.67 * vegetation height)
 wind_h;wind_h;;m;double;vegetation;1;Height at which wind speed is measured.
 RGL;RGL;;W/m2;double;vegetation;1;Minimum incoming shortwave radiation at which there will be transpiration. For trees this is about 30 W/m2, for crops about 100 W/m2.

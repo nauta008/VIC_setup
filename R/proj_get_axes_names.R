@@ -19,7 +19,7 @@ proj.get.axes.names <- function(proj4_params){
     proj_units_y <-  paste(axes$unit,"_north")
   }
   else{
-    proj_units_x <- 'meter'
+    proj_units_x <- 'm'
     proj_units_y <- proj_units_x
     axes$x$name <- 'x'
     axes$x$long_name <- 'x coordinate of grid cell center'

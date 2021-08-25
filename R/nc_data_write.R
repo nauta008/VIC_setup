@@ -162,7 +162,7 @@ nc.data.write.stars <- function(stars_data,file_name, grid_mapping, var_attr=NUL
 
   nc_close(nc)
 
-  data_prec <- "double"
+  data_prec <- "float"
   unit_name <- ""
   for(var_name in var_names){
     nc <- nc_open(file_name, write = T)
@@ -185,7 +185,16 @@ nc.data.write.stars <- function(stars_data,file_name, grid_mapping, var_attr=NUL
   nc <- nc_open(file_name, write=T)
   for(var_name in var_names){
     var_data <- stars_data[[var_name]]
-    ncvar_put(nc,var_name, as.vector(var_data))
+    # Try solution for 4D data
+    if(length(dim(var_data))==4){
+      for(i_dim in 1:dim(var_data)[4]){
+        ncvar_put(nc,var_name, as.vector(var_data[,,,i_dim]), start = c(1,1,1,i_dim), count = c(-1,-1,-1,1))
+      }
+    }
+    else{
+      ncvar_put(nc,var_name, as.vector(var_data))
+    }
+
     # TODO: add description from the var_attr
     ncatt_put(nc,var_name, attname = 'grid_mapping',grid_mapping$grid_mapping_name)
     ncatt_put(nc,var_name, attname = 'missing_value', attval = CONSTANTS$missing_vals[[data_prec]], prec = data_prec)

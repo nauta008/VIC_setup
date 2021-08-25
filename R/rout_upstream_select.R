@@ -1,5 +1,5 @@
 
-rout.upstream.select <- function(xy, downstream, basins){
+rout.upstream.select <- function(xy, downstream, basins, raster=VICSetup$grid$raster){
 
   # only one item
   if( is.null(dim(xy)) && length(xy)==2){
@@ -12,8 +12,8 @@ rout.upstream.select <- function(xy, downstream, basins){
     x <- xy[xy_idx,1]
     y <- xy[xy_idx,2]
     downstream_c <- downstream
-    cell <- cellFromXY(VICSetup$grid$raster, xy[xy_idx,])
-    rowcol <- rowColFromCell(VICSetup$grid$raster, cell)
+    cell <- cellFromXY(raster, xy[xy_idx,])
+    rowcol <- rowColFromCell(raster, cell)
     i <- rowcol[2]
     j <- rowcol[1]
     basin_mask <- basins==basins[cell]
@@ -27,7 +27,7 @@ rout.upstream.select <- function(xy, downstream, basins){
 
     sub_basins <- as.integer(sub_basins)
 
-    r_sub_mask <- raster(t(sub_basins), template=VICSetup$grid$raster)
+    r_sub_mask <- raster(t(sub_basins), template=raster)
     names(r_sub_mask) <- "mask"
     upstreams <- addLayer(upstreams, r_sub_mask)
   }

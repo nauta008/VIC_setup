@@ -7,6 +7,9 @@ domain.crop.to.mask <- function(mask){
   active_cells <- Which(mask==1, cells=TRUE)
   to_extent <- extentFromCells(mask, active_cells)
   new_domain <- extend(crop(mask, to_extent), c(1,1))
+  new_domain@data@unit <- ""
+  new_domain@title <- "mask"
+  dataType(new_domain) <- "INT2U"
   domain.set(new_domain)
 }
 

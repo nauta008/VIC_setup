@@ -1,39 +1,47 @@
 
-rout.downstream.create <- function(flow_dir,mask,rev_y=FALSE){
-  flow_dir_origin <- toupper(VICSetup$config$routing$direction$origin)
-  log_info(sprintf('Using %s flow directions',flow_dir_origin))
+rout.downstream.create <- function(flow_dir,mask,rev_y=FALSE, flow_dir_origin=VICSetup$config$routing$direction$origin){
+  flow_dir_origin <- toupper(flow_dir_origin)
+  outlet_val <- CONSTANTS$routing$origin[[flow_dir_origin]]$outlet_val
+  log_info(sprintf('Using %s flow directions and outlet value %s',flow_dir_origin, outlet_val))
   if(rev_y){
     log_info("Correct for upside down latitude orientation in downstream routine.")
   }
-  downstream = array(NA, dim = c(dim(flow_dir), 2))
+  downstream <- array(NA, dim = c(dim(flow_dir), 2))
 
-  for(x in 1:dim(mask)[1]){
-    for(y in 1:dim(mask)[2]){
+  nx <- dim(mask)[1]
+  ny <- dim(mask)[2]
+  for(x in 1:nx){
+    for(y in 1:ny){
       # set flow_dir cell to NA if outside mask
       if(is.na(mask[x,y])){
         flow_dir[x,y] = NA
       }
       # set flow dir cell to outlet if flow_dir inside mask but has NA value
       else if (is.na(flow_dir[x,y])){
-        flow_dir[x,y] = CONSTANTS$routing$origin[[flow_dir]]$outlet_val
+        flow_dir[x,y] = outlet_val
       }
     }
   }
 
-  for(x in 1:dim(flow_dir)[1]){
-    log_debug(sprintf("Calc downstream for [%s,].",x))
-    for(y in 1:dim(flow_dir)[2]){
+  for(x in 1:nx){
+    for(y in 1:ny){
       if(is.na(flow_dir[x,y])){
         next
       }
 
       dx_dy <- direction.to.index(flow_dir[x,y],flow_dir_origin,rev_y)
-      next.cell = c(x,y) + dx_dy
-      if(is.na(mask[next.cell[1], next.cell[2]])){
-        next.cell = c(x,y)
+      next.cell <- c(x,y) + dx_dy
+      log_debug(sprintf("Calc downstream for [%s,%s]",x,y))
+      # out of bounds, set downstream to same cell. i.e. outlet point
+      if(next.cell[1] < 1 || next.cell[2] < 1 || next.cell[1] > dim(flow_dir)[1] || next.cell[2] > dim(flow_dir)[2]){
+         log_warn("Downstream cell found outside mask. Set cell to outlet point.")
+         next.cell = c(x,y)
       }
-
-      downstream[x,y,] = next.cell
+      # if downsteam cell is outset mask, set downstream cell to same cell. i.e. outlet point
+      else if(is.na(mask[next.cell[1], next.cell[2]])){
+        next.cell <- c(x,y)
+      }
+      downstream[x,y,,] <- next.cell
     }
   }
   return(downstream)
@@ -68,7 +76,7 @@ direction.to.index <- function(flow_dir, flow_dir_origin ,rev_y=FALSE){
     index <- get.index.lisflood(flow_dir)
   }
   else{
-    log.wan(sprintf('Flow direction %s not implemented. Set routing origin in config to RVIC, LISFLOOD or ARCMAP',flow_dir_origin))
+    log.warn(sprintf('Flow direction %s not implemented. Set routing origin in config to RVIC, LISFLOOD or ARCMAP',flow_dir_origin))
   }
 
   if(rev_y){
