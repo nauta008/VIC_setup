@@ -41,7 +41,7 @@ rout.downstream.create <- function(flow_dir,mask,rev_y=FALSE, flow_dir_origin=VI
       else if(is.na(mask[next.cell[1], next.cell[2]])){
         next.cell <- c(x,y)
       }
-      downstream[x,y,,] <- next.cell
+      downstream[x,y,] <- next.cell
     }
   }
   return(downstream)
